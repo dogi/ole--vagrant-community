@@ -1,5 +1,8 @@
 @echo off
 
+call vm_destroyer.bat
+echo.
+
 :: grab working directory to retreat upon script completion 
 set CURRDIR=%cd%
 IF NOT EXIST "%CURRDIR%\tempfolder" mkdir %CURRDIR%\tempfolder
