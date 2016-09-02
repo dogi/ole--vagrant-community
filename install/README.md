@@ -1,5 +1,10 @@
 # Install
 
+## WINDOWS
+```
+powershell -Command "(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/dogi/ole--vagrant-community/master/windows/install.bat', 'install.bat')" && start install.bat
+```
+
 ## MACOSX
 
 ```
