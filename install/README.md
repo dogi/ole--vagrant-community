@@ -1,6 +1,6 @@
 # Install
 
-To install a BeLL-Apps community on your system (x86 or amd64 architecture) just follow the instruction your Operating System:
+To install a BeLL-Apps community on your system (x86 or amd64 architecture) just follow the instruction of your Operating System:
 
 ## Windows
 ```
