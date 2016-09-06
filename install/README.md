@@ -14,6 +14,7 @@ Paste that at a [Command prompt](http://www.howtogeek.com/235101/10-ways-to-open
 ```
 /usr/bin/bash -e "$(curl -fsSL https://raw.githubusercontent.com/dogi/ole--vagrant-community/master/macosx/install.sh)"
 ```
+Paste that at a [Terminal prompt](http://blog.teamtreehouse.com/introduction-to-the-mac-os-x-command-line).
 
 ## Ubuntu
 
