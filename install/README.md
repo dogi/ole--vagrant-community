@@ -21,3 +21,4 @@ Paste that at a [Terminal prompt](http://blog.teamtreehouse.com/introduction-to-
 ```
 /usr/bin/bash -e "$(curl -fsSL https://raw.githubusercontent.com/dogi/ole--vagrant-community/master/ubuntu/install.sh)"
 ```
+Paste that at a [Terminal prompt](http://askubuntu.com/questions/183775/how-do-i-open-a-terminal).
