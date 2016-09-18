@@ -25,9 +25,9 @@ powershell -ExecutionPolicy bypass -Command "& {$a = (Get-CimInstance -ClassName
 set git= dogi
 set /p git= "Enter your git username: "
 cd /D "C:\Users\%USERNAME%"
-REM git clone https://github.com/%git%/ole--vagrant-community.git
+git clone https://github.com/%git%/ole--vagrant-community.git
+
 cd ole--vagrant-community/windows
- 
 start start_vagrant_on_boot.bat 
 start create_desktop_icon.bat
 
