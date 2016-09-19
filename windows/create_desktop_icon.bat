@@ -24,3 +24,5 @@ echo IDList= >> "%LinkPath%"
 echo IconFile=%ICONDEST%\%IconName% >> "%LinkPath%"
 echo IconIndex=0 >> "%LinkPath%"
 echo HotKey=0 >> "%LinkPath%"
+
+exit
