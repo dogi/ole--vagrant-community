@@ -1,7 +1,9 @@
 <#
  # TODO: Add virtualization check
  # TODO: Handle possible installation errors
- # TODO: Start Vagrant at Startup
+ # TODO: Testing:
+ #          - Start Vagrant at Startup
+ #          - Start the VM
  #>
 
 <#
@@ -29,9 +31,15 @@ cd $HOME
 git clone https://github.com/$gituser/ole--vagrant-community.git
 cd .\ole--vagrant-community
 
-# Add OLE Vagrant Community to Startup Folder
-$StartUp="$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
-New-Item -ItemType SymbolicLink -Path "$StartUp" -Name "BeLL_App.lnk" -Value "$HOME\ole--vagrant-community"
+<# 
+ # Add OLE Vagrant Community to Startup Folder (this is actually unnecessary, since we're adding 
+ # a scheduled job to run Vagrant at startup)
+ #>
+
+<# 
+ # $StartUp="$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
+ # New-Item -ItemType SymbolicLink -Path "$StartUp" -Name "BeLL_App.lnk" -Value "$HOME\ole--vagrant-community"
+ #>
 
 # Open ports on network
 New-NetFirewallRule -DisplayName "Allow Outbound Port 5984 CouchDB/HTTP" -Direction Outbound –LocalPort 5984 -Protocol TCP -Action Allow
@@ -39,9 +47,9 @@ New-NetFirewallRule -DisplayName "Allow Inbound Port 5984 CouchDB/HTTP" -Directi
 New-NetFirewallRule -DisplayName "Allow Outbound Port 6984 CouchDB/HTTPS" -Direction Outbound –LocalPort 6984 -Protocol TCP -Action Allow
 New-NetFirewallRule -DisplayName "Allow Inbound Port 6984 CouchDB/HTTPS" -Direction Inbound –LocalPort 6984 -Protocol TCP -Action Allow
 
-<# 
- ################  TODO: Start Vagrant at Startup ###############
- #>
+# Start Vagrant at Startup
+$trigger = New-JobTrigger -AtStartup -RandomDelay 00:01:00
+Register-ScheduledJob -Trigger $trigger -FilePath $HOME\ole--vagrant-community/windows/vagrantup.ps1 -Name VagrantUp -ExecutionPolicy Bypass
 
 # Create a desktop icon
 $WScriptShell = New-Object -ComObject WScript.Shell
@@ -50,3 +58,7 @@ $Shortcut.TargetPath = "http://127.0.0.1:5984/apps/_design/bell/MyApp/index.html
 $Shortcut.IconLocation = "$HOME/ole--vagrant-community/windows/Bell_logo.ico, 0"
 $Shortcut.Description = "My BeLL App"
 $Shortcut.Save()
+
+# Start the VM
+& ((Split-Path $MyInvocation.MyCommand.Path) + "vagrantup.ps1") -ExecutionPolicy Bypass
+Write-Host The installation is complete.

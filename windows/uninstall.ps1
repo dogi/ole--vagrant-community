@@ -4,7 +4,8 @@
  # If the user doesn't want to uninstall VirtualBox, then OLE VM is removed.
  # Removes desktop icon.
  #
- # TODO: Delete ole--vagrant-community folder and subfolders
+ # TODO: Testing:
+ #          - Delete ole--vagrant-bells and chocolatey
  #>
 
 # Uninstall Bonjour
@@ -30,9 +31,14 @@ if ($git.ToUpper() -eq 'Y') {
 # Uninstall vagrant
 choco uninstall vagrant -y
 
-<#
- ############# TODO: Delete ole--vagrant-community folder and subfolders ############
- #>
+# Uninstall chocolatey
+choco uninstall chocolatey -y
+
+# Delete ole vagrant bells and chocolatey
+"$HOME\ole--vagrant-bells", "$env:ALLUSERSPROFILE\chocolatey" | % {
+    Get-ChildItem -Path $_ -Recurse | Remove-Item -Force -Recurse
+    Remove-Item $_ -Force 
+    }
 
 # Remove desktop icon
 Remove-Item C:\Users\*\Desktop\MyBeLL.url –Force
