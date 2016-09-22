@@ -19,8 +19,7 @@ IF "%STATE%" NEQ "saved" (
 
 if errorlevel 1 (
   ECHO FAILURE! Vagrant VM unresponsive...
+  pause
 )
 
-echo Installation Completed
-pause 
 exit
