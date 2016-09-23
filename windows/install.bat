@@ -14,7 +14,7 @@ if '%errorlevel%' NEQ '0' (
   echo UAC.ShellExecute "cmd.exe", "/c %~s0 %params%", "", "runas", 1 >> "%temp%\getadmin.vbs"
   "%temp%\getadmin.vbs"
   del "%temp%\getadmin.vbs"
-  exit /B
+  exit
 )
 pushd "%CD%"
 CD /D "%~dp0"
@@ -26,10 +26,31 @@ set git= dogi
 set /p git= "Enter your git username: "
 cd /D "C:\Users\%USERNAME%"
 git clone https://github.com/%git%/ole--vagrant-community.git
-
 cd ole--vagrant-community/windows
+ 
 start start_vagrant_on_boot.bat 
 start create_desktop_icon.bat
 
+REM Open Windows Firewall Ports
+netsh advfirewall firewall show rule name="CouchDB/HTTP(BeLL)" >nul
+if not ERRORLEVEL 1 (
+    echo Ports are already open.
+	netsh advfirewall firewall delete rule name="CouchDB/HTTP(BeLL)" 
+) 
+echo Creating firewall rule CouchDB/HTTP(BeLL)
+netsh advfirewall firewall add rule name="CouchDB/HTTP(BeLL)" dir=out action=allow protocol=TCP localport=5984
+netsh advfirewall firewall add rule name="CouchDB/HTTP(BeLL)" dir=in action=allow protocol=TCP localport=5984
+
+netsh advfirewall firewall show rule name="CouchDB/HTTPS(BeLL)" >nul
+if not ERRORLEVEL 1 (
+    echo Ports are already open.
+	netsh advfirewall firewall delete rule name="CouchDB/HTTPS(BeLL)"
+) 
+echo Creating firewall rule CouchDB/HTTPS(BeLL)
+netsh advfirewall firewall add rule name="CouchDB/HTTPS(BeLL)" dir=out action=allow protocol=TCP localport=6984
+netsh advfirewall firewall add rule name="CouchDB/HTTPS(BeLL)" dir=in action=allow protocol=TCP localport=6984
+
+echo Installation completed. Vagrant is starting...
+pause
 exit
 

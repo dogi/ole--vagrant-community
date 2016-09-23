@@ -6,9 +6,33 @@
  #          - Start the VM
  #>
 
-<#
- ############## TODO: Add virtualization check ##############
- #>
+#Taking admin privileges
+If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{   
+	$arguments = "& '" + $myinvocation.mycommand.definition + "'"
+	Start-Process powershell -Verb runAs -ArgumentList $arguments
+	Break
+}
+
+#Checking for Virtualization
+$a = (Get-CimInstance -ClassName win32_processor -Property Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions)
+$a | Format-List Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions
+$slat = $a.SecondLevelAddressTranslationExtensions
+$virtual = $a.VirtualizationFirmwareEnabled
+$vmextensions = $a.VMMonitorModeExtensions
+If ($slat -eq $false)
+{
+	"BeLL-Apps is not compatible with your system. In order to install it, you need to upgrade your CPU first."
+	exit
+}
+Else
+{
+	If ($virtual -eq $false)
+	{
+		"Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/"
+		exit
+	}
+}
 
 # Install Chocolatey
 (iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))) >$null 2>&1
@@ -42,10 +66,10 @@ cd .\ole--vagrant-community
  #>
 
 # Open ports on network
-New-NetFirewallRule -DisplayName "Allow Outbound Port 5984 CouchDB/HTTP" -Direction Outbound –LocalPort 5984 -Protocol TCP -Action Allow
-New-NetFirewallRule -DisplayName "Allow Inbound Port 5984 CouchDB/HTTP" -Direction Inbound –LocalPort 5984 -Protocol TCP -Action Allow
-New-NetFirewallRule -DisplayName "Allow Outbound Port 6984 CouchDB/HTTPS" -Direction Outbound –LocalPort 6984 -Protocol TCP -Action Allow
-New-NetFirewallRule -DisplayName "Allow Inbound Port 6984 CouchDB/HTTPS" -Direction Inbound –LocalPort 6984 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Allow Outbound Port 5984 CouchDB/HTTP" -Direction Outbound â€“LocalPort 5984 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Allow Inbound Port 5984 CouchDB/HTTP" -Direction Inbound â€“LocalPort 5984 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Allow Outbound Port 6984 CouchDB/HTTPS" -Direction Outbound â€“LocalPort 6984 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Allow Inbound Port 6984 CouchDB/HTTPS" -Direction Inbound â€“LocalPort 6984 -Protocol TCP -Action Allow
 
 # Start Vagrant at Startup
 $trigger = New-JobTrigger -AtStartup -RandomDelay 00:01:00
