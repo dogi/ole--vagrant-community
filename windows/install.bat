@@ -24,7 +24,7 @@ if "%errorlevel%" equ "5" (
 	pause
 	exit
 )
-echo Please wait while BeLL-Apps is being installed... 
+
 set git= dogi
 set /p git= "Enter your git username: "
 
