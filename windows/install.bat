@@ -1,7 +1,6 @@
 @echo off
 
 echo This script will install BeLL-Apps on your computer
-
 REM Get Admin For Batch File
 REM  --> Check for permissions
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
@@ -20,12 +19,17 @@ pushd "%CD%"
 CD /D "%~dp0"
 
 REM  Check for Virtualization and Install programs if enabled
-powershell -ExecutionPolicy bypass -Command "& {$a = (Get-CimInstance -ClassName win32_processor -Property Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions); $a | Format-List Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions; $slat = $a.SecondLevelAddressTranslationExtensions; $virtual = $a.VirtualizationFirmwareEnabled; $vmextensions = $a.VMMonitorModeExtensions;If ($slat -eq $false){Write-Host 'BeLL-Apps is not compatible with your system. In order to install it, you need to upgrade your CPU first.';exit}Else{ If ($virtual -eq $false){'Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/'}If ($virtual -eq $false){"Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/";exit}}(iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))) >$null 2>&1;RefreshEnv;choco install bonjour, git, virtualbox, vagrant -y -allowEmptyChecksums;RefreshEnv};
-
+powershell -ExecutionPolicy bypass -Command "& {$a = (Get-CimInstance -ClassName win32_processor -Property Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions); $a | Format-List Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions; $slat = $a.SecondLevelAddressTranslationExtensions; $virtual = $a.VirtualizationFirmwareEnabled; $vmextensions = $a.VMMonitorModeExtensions;If ($slat -eq $false){Write-Host 'BeLL-Apps is not compatible with your system. In order to install it, you need to upgrade your CPU first.';exit 5}Else{If ($virtual -eq $false){"Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/";exit 5}}Write-Host 'Please wait while BeLL-Apps is being installed...'; (iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))) >$null 2>&1;RefreshEnv;choco install bonjour, git, virtualbox, vagrant -y -allowEmptyChecksums;RefreshEnv};"
+if "%errorlevel%" equ "5" (
+	pause
+	exit
+)
+echo Please wait while BeLL-Apps is being installed... 
 set git= dogi
 set /p git= "Enter your git username: "
+
 cd /D "C:\Users\%USERNAME%"
-git clone https://github.com/%git%/ole--vagrant-community.git
+"\Program Files\Git\cmd\git.exe" clone https://github.com/%git%/ole--vagrant-community.git
 cd ole--vagrant-community/windows
  
 start start_vagrant_on_boot.bat 
@@ -34,7 +38,7 @@ start create_desktop_icon.bat
 REM Open Windows Firewall Ports
 netsh advfirewall firewall show rule name="CouchDB/HTTP(BeLL)" >nul
 if not ERRORLEVEL 1 (
-    echo Ports are already open.
+	echo Ports are already open.
 	netsh advfirewall firewall delete rule name="CouchDB/HTTP(BeLL)" 
 ) 
 echo Creating firewall rule CouchDB/HTTP(BeLL)
@@ -43,14 +47,15 @@ netsh advfirewall firewall add rule name="CouchDB/HTTP(BeLL)" dir=in action=allo
 
 netsh advfirewall firewall show rule name="CouchDB/HTTPS(BeLL)" >nul
 if not ERRORLEVEL 1 (
-    echo Ports are already open.
+	echo Ports are already open.
 	netsh advfirewall firewall delete rule name="CouchDB/HTTPS(BeLL)"
 ) 
 echo Creating firewall rule CouchDB/HTTPS(BeLL)
 netsh advfirewall firewall add rule name="CouchDB/HTTPS(BeLL)" dir=out action=allow protocol=TCP localport=6984
 netsh advfirewall firewall add rule name="CouchDB/HTTPS(BeLL)" dir=in action=allow protocol=TCP localport=6984
-
 echo Installation completed. Vagrant is starting...
 pause
 exit
+)
+
 
