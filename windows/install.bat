@@ -56,6 +56,3 @@ netsh advfirewall firewall add rule name="CouchDB/HTTPS(BeLL)" dir=in action=all
 echo Installation completed. Vagrant is starting...
 pause
 exit
-)
-
-
