@@ -13,7 +13,7 @@ If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 # Set ExecutionPolicy to Bypass
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine -Force
 
-#Checking for Virtualization
+#Check for Virtualization
 $a = (Get-CimInstance -ClassName win32_processor -Property Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions)
 $a | Format-List Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions
 $slat = $a.SecondLevelAddressTranslationExtensions
@@ -40,7 +40,7 @@ Else
 RefreshEnv
 
 # Install the other required programs
-choco install bonjour, git, virtualbox, vagrant -y -allowEmptyChecksums
+choco install bonjour, git, virtualbox, vagrant, firefox -y -allowEmptyChecksums
 # Add programs to the Path
 RefreshEnv
 
@@ -68,8 +68,9 @@ Register-ScheduledJob -Trigger $trigger -FilePath $HOME\ole--vagrant-community/w
 # Create a desktop icon
 $WScriptShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WScriptShell.CreateShortcut("$HOME\Desktop\MyBeLL.lnk")
-$Shortcut.TargetPath = "http://127.0.0.1:5984/apps/_design/bell/MyApp/index.html"
+$Shortcut.TargetPath = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
 $Shortcut.IconLocation = "$HOME/ole--vagrant-community/windows/Bell_logo.ico, 0"
+$Shortcut.Arguments = "http://127.0.0.1:5984/apps/_design/bell/MyApp/index.html"
 $Shortcut.Description = "My BeLL App"
 $Shortcut.Save()
 

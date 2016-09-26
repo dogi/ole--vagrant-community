@@ -35,6 +35,13 @@ choco uninstall vagrant -y
 # Uninstall chocolatey
 choco uninstall chocolatey -y
 
+# Only uninstall Firefox if the user agrees
+$ff = Read-Host 'Are you sure you want to remove Firefox? (Y)es, (N)o'
+
+if ($ff.ToUpper() -eq 'Y') {
+    choco uninstall firefox -y
+}
+
 # Remove ole--vagrant-community and chocolatey folder and subfolders
 "$HOME\ole--vagrant-community", "$env:ALLUSERSPROFILE\chocolatey" | % {
     Get-ChildItem -Path $_ -Recurse | Remove-Item -Force -Recurse
