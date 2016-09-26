@@ -37,8 +37,8 @@ choco uninstall chocolatey -y
 # Delete ole vagrant bells and chocolatey
 "$HOME\ole--vagrant-bells", "$env:ALLUSERSPROFILE\chocolatey" | % {
     Get-ChildItem -Path $_ -Recurse | Remove-Item -Force -Recurse
-    Remove-Item $_ -Force 
+    Remove-Item $_ -Force -Recurse
     }
 
 # Remove desktop icon
-Remove-Item C:\Users\*\Desktop\MyBeLL.url –Force
+Remove-Item C:\Users\*\Desktop\MyBeLL.lnk –Force

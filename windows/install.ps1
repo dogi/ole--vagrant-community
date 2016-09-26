@@ -6,6 +6,16 @@
  #          - Start the VM
  #>
 
+# Set ExecutionPolicy to Bypass
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine -Force
+
+# Restart as Admin
+$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
+$newProcess.Arguments = $myInvocation.MyCommand.Definition;
+$newProcess.Verb = "runas";
+[System.Diagnostics.Process]::Start($newProcess);
+exit
+
 <#
  ############## TODO: Add virtualization check ##############
  #>
@@ -23,6 +33,13 @@ RefreshEnv
 <#
  ############# TODO: Handle possible installation errors ###############
  #>
+
+# Restart as Admin (necessary for git to work)
+$newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
+$newProcess.Arguments = $myInvocation.MyCommand.Definition;
+$newProcess.Verb = "runas";
+[System.Diagnostics.Process]::Start($newProcess);
+exit
 
 # Git clone OLE Vagrant Community
 $gituser = Read-Host "Please, enter your GitHub username, or press Enter to continue:"
@@ -49,7 +66,7 @@ New-NetFirewallRule -DisplayName "Allow Inbound Port 6984 CouchDB/HTTPS" -Direct
 
 # Start Vagrant at Startup
 $trigger = New-JobTrigger -AtStartup -RandomDelay 00:01:00
-Register-ScheduledJob -Trigger $trigger -FilePath $HOME\ole--vagrant-community/windows/vagrantup.ps1 -Name VagrantUp -ExecutionPolicy Bypass
+Register-ScheduledJob -Trigger $trigger -FilePath $HOME\ole--vagrant-community/windows/vagrantup.ps1 -Name VagrantUp
 
 # Create a desktop icon
 $WScriptShell = New-Object -ComObject WScript.Shell
@@ -60,5 +77,5 @@ $Shortcut.Description = "My BeLL App"
 $Shortcut.Save()
 
 # Start the VM
-& ((Split-Path $MyInvocation.MyCommand.Path) + "vagrantup.ps1") -ExecutionPolicy Bypass
+& ((Split-Path $MyInvocation.MyCommand.Path) + "\vagrantup.ps1")
 Write-Host The installation is complete.

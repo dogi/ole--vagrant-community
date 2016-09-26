@@ -4,9 +4,9 @@ vagrant up
 $str = vagrant global-status
 $strArr = @($str.Split(" "))
 if ($strArr.Item(($strArr.IndexOf("virtualbox")+1)) -eq "running") {
-    Write-Host You can now click on the BeLL App icon on your desktop to launch your BeLL App.
+    Write-Host You can now click on the MyBeLL icon on your desktop to launch your BeLL App.
 } else {
-    Write-Host The BeLL App is unresponsive.
+    Write-Host Your BeLL App virtual machine doesn`'t seem to be running properly. 
 }
 
 <# The following code is issuing the command "vagrant resume" if the VM is in a saved state,
