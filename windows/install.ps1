@@ -2,7 +2,6 @@
  # TODO: Handle possible installation errors
  #>
 
-
 # Take admin privileges
 If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
 {   
@@ -53,18 +52,8 @@ RefreshEnv
 $gituser = Read-Host "Please, enter your GitHub username, or press Enter to continue:"
 if ($gituser -eq "") {$gituser = "dogi"}
 cd $HOME
-git clone https://github.com/$gituser/ole--vagrant-community.git
+& 'C:\Program Files\Git\bin\git.exe' clone https://github.com/$gituser/ole--vagrant-community.git
 cd .\ole--vagrant-community
-
-<# 
- # Add OLE Vagrant Community to Startup Folder (this is actually unnecessary, since we're adding 
- # a scheduled job to run Vagrant at startup)
- #>
-
-<# 
- # $StartUp="$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
- # New-Item -ItemType SymbolicLink -Path "$StartUp" -Name "BeLL_App.lnk" -Value "$HOME\ole--vagrant-community"
- #>
 
 # Open ports on network
 New-NetFirewallRule -DisplayName "Allow Outbound Port 5984 CouchDB/HTTP" -Direction Outbound –LocalPort 5984 -Protocol TCP -Action Allow
