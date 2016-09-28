@@ -1,6 +1,5 @@
-﻿# Run as Admin
-If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-{   
+# Run as Admin
+If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {   
     $arguments = "& '" + $myinvocation.mycommand.definition + "'"
 	Start-Process powershell -Verb runAs -ArgumentList $arguments
 	Break
@@ -57,13 +56,13 @@ if ($ff.ToUpper() -eq 'Y') {
     }
 
 # Close ports on network
-New-NetFirewallRule -DisplayName "Block Outbound Port 5984 CouchDB/HTTP" -Direction Outbound –LocalPort 5984 -Protocol TCP -Action Block
-New-NetFirewallRule -DisplayName "Block Inbound Port 5984 CouchDB/HTTP" -Direction Inbound –LocalPort 5984 -Protocol TCP -Action Block
-New-NetFirewallRule -DisplayName "Block Outbound Port 6984 CouchDB/HTTPS" -Direction Outbound –LocalPort 6984 -Protocol TCP -Action Block
-New-NetFirewallRule -DisplayName "Block Inbound Port 6984 CouchDB/HTTPS" -Direction Inbound –LocalPort 6984 -Protocol TCP -Action Block
+New-NetFirewallRule -DisplayName "Block Outbound Port 5984 CouchDB/HTTP" -Direction Outbound -LocalPort 5984 -Protocol TCP -Action Block
+New-NetFirewallRule -DisplayName "Block Inbound Port 5984 CouchDB/HTTP" -Direction Inbound -LocalPort 5984 -Protocol TCP -Action Block
+New-NetFirewallRule -DisplayName "Block Outbound Port 6984 CouchDB/HTTPS" -Direction Outbound -LocalPort 6984 -Protocol TCP -Action Block
+New-NetFirewallRule -DisplayName "Block Inbound Port 6984 CouchDB/HTTPS" -Direction Inbound -LocalPort 6984 -Protocol TCP -Action Block
 
 # Remove vagrant job from Startup
 Unregister-ScheduledJob VagrantUp -Force
 
 # Remove desktop icon
-Remove-Item C:\Users\*\Desktop\MyBeLL.lnk –Force
+Remove-Item C:\Users\*\Desktop\MyBeLL.lnk -Force
