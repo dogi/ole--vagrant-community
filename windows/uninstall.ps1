@@ -21,7 +21,7 @@ if ($vb.ToUpper() -eq 'Y') {
 $vm = Read-Host 'Do you want to remove the virtual machine? (Y)es, (N)o'
 
 if ($vm.ToUpper() -eq 'Y') {
-    C:\HashiCorp\Vagrant\bin\vagrant.exe destroy ole/jessie64 -f
+    C:\HashiCorp\Vagrant\bin\vagrant.exe destroy community -f
 }
 
 $box = Read-Host 'Do you want to remove also all the files? (Y)es, (N)o'
@@ -55,6 +55,12 @@ if ($ff.ToUpper() -eq 'Y') {
     Get-ChildItem -Path $_ -Recurse | Remove-Item -Force -Recurse
     Remove-Item $_ -Force -Recurse
     }
+
+# Close ports on network
+New-NetFirewallRule -DisplayName "Block Outbound Port 5984 CouchDB/HTTP" -Direction Outbound –LocalPort 5984 -Protocol TCP -Action Block
+New-NetFirewallRule -DisplayName "Block Inbound Port 5984 CouchDB/HTTP" -Direction Inbound –LocalPort 5984 -Protocol TCP -Action Block
+New-NetFirewallRule -DisplayName "Block Outbound Port 6984 CouchDB/HTTPS" -Direction Outbound –LocalPort 6984 -Protocol TCP -Action Block
+New-NetFirewallRule -DisplayName "Block Inbound Port 6984 CouchDB/HTTPS" -Direction Inbound –LocalPort 6984 -Protocol TCP -Action Block
 
 # Remove vagrant job from Startup
 Unregister-ScheduledJob VagrantUp -Force
