@@ -3,8 +3,8 @@
  #>
 
 # Take admin privileges
-If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-{   
+if (! ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
+          [Security.Principal.WindowsBuiltInRole] "Administrator")) {   
 	$arguments = "& '" + $myinvocation.mycommand.definition + "'"
 	Start-Process powershell -Verb runAs -ArgumentList $arguments
 	Break
@@ -14,21 +14,19 @@ If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine -Force
 
 #Check for Virtualization
-$a = (Get-CimInstance -ClassName win32_processor -Property Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions)
+$a = (Get-CimInstance -ClassName win32_processor -Property Name, 
+                      SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions)
 $a | Format-List Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions
 $slat = $a.SecondLevelAddressTranslationExtensions
 $virtual = $a.VirtualizationFirmwareEnabled
 $vmextensions = $a.VMMonitorModeExtensions
-If ($slat -eq $false) 
-{
+if ($slat -eq $false) {
 	"BeLL-Apps is not compatible with your system. In order to install it, you need to upgrade your CPU first."
 	exit
-} 
-Else 
-{
-	If ($virtual -eq $false)
-	{
-		"Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/"
+} else {
+	if ($virtual -eq $false) {
+		"Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. 
+         Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/"
 		exit
 	}
 }
@@ -62,14 +60,18 @@ New-NetFirewallRule -DisplayName "Allow Outbound Port 6984 CouchDB/HTTPS" -Direc
 New-NetFirewallRule -DisplayName "Allow Inbound Port 6984 CouchDB/HTTPS" -Direction Inbound –LocalPort 6984 -Protocol TCP -Action Allow
 
 # Start Vagrant at Startup
-$trigger = New-JobTrigger -AtStartup -RandomDelay 00:01:00
-Register-ScheduledJob -Trigger $trigger -FilePath $HOME\ole--vagrant-community/windows/vagrantup.ps1 -Name VagrantUp
+$trigger = New-JobTrigger -AtStartup -RandomDelay 00:00:30
+Register-ScheduledJob -Trigger $trigger -FilePath $HOME\ole--vagrant-community\windows\vagrantup.ps1 -Name VagrantUp
 
 # Create a desktop icon
 $WScriptShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WScriptShell.CreateShortcut("$HOME\Desktop\MyBeLL.lnk")
-$Shortcut.TargetPath = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
-$Shortcut.IconLocation = "$HOME/ole--vagrant-community/windows/Bell_logo.ico, 0"
+if ([IntPtr]::Size -eq 8) {
+    $Shortcut.TargetPath = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
+} else {
+    $Shortcut.TargetPath = "C:\Program Files\Mozilla Firefox\firefox.exe"
+}
+$Shortcut.IconLocation = "$HOME\ole--vagrant-community\windows\Bell_logo.ico, 0"
 $Shortcut.Arguments = "http://127.0.0.1:5984/apps/_design/bell/MyApp/index.html"
 $Shortcut.Description = "My BeLL App"
 $Shortcut.Save()
