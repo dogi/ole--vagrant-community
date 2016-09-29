@@ -66,7 +66,11 @@ Register-ScheduledJob -Trigger $trigger -FilePath $HOME\ole--vagrant-community\w
 # Create a desktop icon
 $WScriptShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WScriptShell.CreateShortcut("$HOME\Desktop\MyBeLL.lnk")
-$Shortcut.TargetPath = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
+if ([IntPtr]::Size -eq 8) {
+    $Shortcut.TargetPath = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
+} else {
+    $Shortcut.TargetPath = "C:\Program Files\Mozilla Firefox\firefox.exe"
+}
 $Shortcut.IconLocation = "$HOME\ole--vagrant-community\windows\Bell_logo.ico, 0"
 $Shortcut.Arguments = "http://127.0.0.1:5984/apps/_design/bell/MyApp/index.html"
 $Shortcut.Description = "My BeLL App"
