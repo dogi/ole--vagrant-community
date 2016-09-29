@@ -2,6 +2,8 @@
  # TODO: Handle possible installation errors
  #>
 
+Write-Host Please wait while BeLL App is being installed.
+
 # Take admin privileges
 if (! ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
           [Security.Principal.WindowsBuiltInRole] "Administrator")) {   
@@ -21,13 +23,15 @@ $slat = $a.SecondLevelAddressTranslationExtensions
 $virtual = $a.VirtualizationFirmwareEnabled
 $vmextensions = $a.VMMonitorModeExtensions
 if ($slat -eq $false) {
-	"BeLL-Apps is not compatible with your system. In order to install it, you need to upgrade your CPU first."
-	exit
+    Write-Host BeLL-Apps is not compatible with your system. In order to install it, you need to upgrade your CPU first.
+    pause
+    exit
 } else {
 	if ($virtual -eq $false) {
-		"Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. 
-         Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/"
-		exit
+        Write-Host Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. `
+        Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/
+        pause
+        exit
 	}
 }
 
