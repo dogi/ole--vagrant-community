@@ -19,21 +19,36 @@ pushd "%CD%"
 CD /D "%~dp0"
 
 REM  Check for Virtualization and Install programs if enabled
-powershell -ExecutionPolicy bypass -Command "& {$a = (Get-CimInstance -ClassName win32_processor -Property Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions); $a | Format-List Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions; $slat = $a.SecondLevelAddressTranslationExtensions; $virtual = $a.VirtualizationFirmwareEnabled; $vmextensions = $a.VMMonitorModeExtensions;If ($slat -eq $false){Write-Host 'BeLL-Apps is not compatible with your system. In order to install it, you need to upgrade your CPU first.';exit 5}Else{If ($virtual -eq $false){"Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/";exit 5}}Write-Host 'Please wait while BeLL-Apps is being installed...'; (iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))) >$null 2>&1;RefreshEnv;choco install bonjour, git, virtualbox, vagrant -y -allowEmptyChecksums;RefreshEnv};"
+powershell -ExecutionPolicy bypass -Command "& {$a = (Get-CimInstance -ClassName win32_processor -Property Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions); $a | Format-List Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions; $slat = $a.SecondLevelAddressTranslationExtensions; $virtual = $a.VirtualizationFirmwareEnabled; $vmextensions = $a.VMMonitorModeExtensions;If ($slat -eq $false){Write-Host 'BeLL-Apps is not compatible with your system. In order to install it, you need to upgrade your CPU first.';exit 5}Else{If ($virtual -eq $false){Write-Host 'Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/';exit 5}}Write-Host 'Please wait while BeLL-Apps is being installed...'; (iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))) >$null 2>&1;RefreshEnv;choco install bonjour, git, virtualbox, vagrant -y -allowEmptyChecksums;RefreshEnv};"
 if "%errorlevel%" equ "5" (
 	pause
 	exit
 )
 
-set git= dogi
-set /p git= "Enter your git username: "
+set git=dogi
+set /p git="Enter your git username: "
 
 cd /D "C:\Users\%USERNAME%"
 "\Program Files\Git\cmd\git.exe" clone https://github.com/%git%/ole--vagrant-community.git
 cd ole--vagrant-community/windows
  
 start start_vagrant_on_boot.bat 
-start create_desktop_icon.bat
+
+REM Create desktop icon
+set SCRIPT="%TEMP%\ole-helper.vbs"
+echo set oWS = WScript.CreateObject("WScript.Shell") >> %SCRIPT%
+echo set oLink = oWS.CreateShortcut("C:\Users\%USERNAME%\Desktop\MyBeLL.lnk") >> %SCRIPT%
+if exist "%PROGRAMFILES(x86)\Mozilla Firefox\" (
+	echo oLink.TargetPath = "%PROGRAMFILES(x86)%\Mozilla Firefox\firefox.exe" >> %SCRIPT%
+) else (
+	echo oLink.TargetPath = "%PROGRAMFILES%\Mozilla Firefox\firefox.exe" >> %SCRIPT%
+)
+echo oLink.IconLocation = "C:\Users\%USERNAME%\ole--vagrant-community\windows\Bell_logo.ico" >> %SCRIPT%
+echo oLink.Arguments = "http://127.0.0.1:5984/apps/_design/bell/MyApp/index.html" >> %SCRIPT%
+echo oLink.Description = "My BeLL App"
+echo oLink.Save >> %SCRIPT%
+cscript %SCRIPT%
+del %SCRIPT%
 
 REM Open Windows Firewall Ports
 netsh advfirewall firewall show rule name="CouchDB/HTTP(BeLL)" >nul

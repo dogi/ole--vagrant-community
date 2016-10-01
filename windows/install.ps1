@@ -1,36 +1,39 @@
 <#
- # TODO: Add virtualization check
  # TODO: Handle possible installation errors
- # TODO: Testing:
- #          - Start Vagrant at Startup
- #          - Start the VM
  #>
 
-#Taking admin privileges
-If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-{   
+Write-Host Asking for admin privileges. Please`, accept any prompt that may pop up.
+
+# Take admin privileges
+if (! ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
+          [Security.Principal.WindowsBuiltInRole] "Administrator")) {   
 	$arguments = "& '" + $myinvocation.mycommand.definition + "'"
 	Start-Process powershell -Verb runAs -ArgumentList $arguments
 	Break
 }
 
-#Checking for Virtualization
-$a = (Get-CimInstance -ClassName win32_processor -Property Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions)
+Write-Host Please`, wait while BeLL App is being installed...
+
+# Set ExecutionPolicy to Bypass
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine -Force
+
+#Check for Virtualization
+$a = (Get-CimInstance -ClassName win32_processor -Property Name, 
+                      SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions)
 $a | Format-List Name, SecondLevelAddressTranslationExtensions, VirtualizationFirmwareEnabled, VMMonitorModeExtensions
 $slat = $a.SecondLevelAddressTranslationExtensions
 $virtual = $a.VirtualizationFirmwareEnabled
 $vmextensions = $a.VMMonitorModeExtensions
-If ($slat -eq $false)
-{
-	"BeLL-Apps is not compatible with your system. In order to install it, you need to upgrade your CPU first."
-	exit
-}
-Else
-{
-	If ($virtual -eq $false)
-	{
-		"Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/"
-		exit
+if ($slat -eq $false) {
+    Write-Host BeLL-Apps is not compatible with your system. In order to install it, you need to upgrade your CPU first.
+    pause
+    exit
+} else {
+	if ($virtual -eq $false) {
+        Write-Host Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. `
+        Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/
+        pause
+        exit
 	}
 }
 
@@ -40,7 +43,7 @@ Else
 RefreshEnv
 
 # Install the other required programs
-choco install bonjour, git, virtualbox, vagrant -y -allowEmptyChecksums
+choco install bonjour, git, virtualbox, vagrant, firefox -y -allowEmptyChecksums
 # Add programs to the Path
 RefreshEnv
 
@@ -52,37 +55,31 @@ RefreshEnv
 $gituser = Read-Host "Please, enter your GitHub username, or press Enter to continue:"
 if ($gituser -eq "") {$gituser = "dogi"}
 cd $HOME
-git clone https://github.com/$gituser/ole--vagrant-community.git
+& 'C:\Program Files\Git\bin\git.exe' clone https://github.com/$gituser/ole--vagrant-community.git
 cd .\ole--vagrant-community
 
-<# 
- # Add OLE Vagrant Community to Startup Folder (this is actually unnecessary, since we're adding 
- # a scheduled job to run Vagrant at startup)
- #>
-
-<# 
- # $StartUp="$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
- # New-Item -ItemType SymbolicLink -Path "$StartUp" -Name "BeLL_App.lnk" -Value "$HOME\ole--vagrant-community"
- #>
-
 # Open ports on network
-New-NetFirewallRule -DisplayName "Allow Outbound Port 5984 CouchDB/HTTP" -Direction Outbound â€“LocalPort 5984 -Protocol TCP -Action Allow
-New-NetFirewallRule -DisplayName "Allow Inbound Port 5984 CouchDB/HTTP" -Direction Inbound â€“LocalPort 5984 -Protocol TCP -Action Allow
-New-NetFirewallRule -DisplayName "Allow Outbound Port 6984 CouchDB/HTTPS" -Direction Outbound â€“LocalPort 6984 -Protocol TCP -Action Allow
-New-NetFirewallRule -DisplayName "Allow Inbound Port 6984 CouchDB/HTTPS" -Direction Inbound â€“LocalPort 6984 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Allow Outbound Port 5984 CouchDB/HTTP" -Direction Outbound –LocalPort 5984 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Allow Inbound Port 5984 CouchDB/HTTP" -Direction Inbound –LocalPort 5984 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Allow Outbound Port 6984 CouchDB/HTTPS" -Direction Outbound –LocalPort 6984 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Allow Inbound Port 6984 CouchDB/HTTPS" -Direction Inbound –LocalPort 6984 -Protocol TCP -Action Allow
 
 # Start Vagrant at Startup
-$trigger = New-JobTrigger -AtStartup -RandomDelay 00:01:00
-Register-ScheduledJob -Trigger $trigger -FilePath $HOME\ole--vagrant-community/windows/vagrantup.ps1 -Name VagrantUp -ExecutionPolicy Bypass
+$trigger = New-JobTrigger -AtStartup -RandomDelay 00:00:30
+Register-ScheduledJob -Trigger $trigger -FilePath $HOME\ole--vagrant-community\windows\vagrantup.ps1 -Name VagrantUp
 
 # Create a desktop icon
 $WScriptShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WScriptShell.CreateShortcut("$HOME\Desktop\MyBeLL.lnk")
-$Shortcut.TargetPath = "http://127.0.0.1:5984/apps/_design/bell/MyApp/index.html"
-$Shortcut.IconLocation = "$HOME/ole--vagrant-community/windows/Bell_logo.ico, 0"
+if (Test-Path 'C:\Program Files (x86)\Mozilla Firefox') {
+    $Shortcut.TargetPath = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
+} else {
+    $Shortcut.TargetPath = "C:\Program Files\Mozilla Firefox\firefox.exe"
+}
+$Shortcut.IconLocation = "$HOME\ole--vagrant-community\windows\Bell_logo.ico, 0"
+$Shortcut.Arguments = "http://127.0.0.1:5984/apps/_design/bell/MyApp/index.html"
 $Shortcut.Description = "My BeLL App"
 $Shortcut.Save()
 
 # Start the VM
-& ((Split-Path $MyInvocation.MyCommand.Path) + "vagrantup.ps1") -ExecutionPolicy Bypass
-Write-Host The installation is complete.
+& ((Split-Path $MyInvocation.MyCommand.Path) + "\vagrantup.ps1")
