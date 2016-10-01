@@ -2,7 +2,7 @@
  # TODO: Handle possible installation errors
  #>
 
-Write-Host Please wait while BeLL App is being installed.
+Write-Host Asking for admin privileges. Please`, accept any prompt that may pop up.
 
 # Take admin privileges
 if (! ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
@@ -11,6 +11,8 @@ if (! ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]
 	Start-Process powershell -Verb runAs -ArgumentList $arguments
 	Break
 }
+
+Write-Host Please`, wait while BeLL App is being installed...
 
 # Set ExecutionPolicy to Bypass
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine -Force
@@ -34,7 +36,6 @@ if ($slat -eq $false) {
         exit
 	}
 }
-
 
 # Install Chocolatey
 (iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))) >$null 2>&1
@@ -70,7 +71,7 @@ Register-ScheduledJob -Trigger $trigger -FilePath $HOME\ole--vagrant-community\w
 # Create a desktop icon
 $WScriptShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WScriptShell.CreateShortcut("$HOME\Desktop\MyBeLL.lnk")
-if ([IntPtr]::Size -eq 8) {
+if (Test-Path 'C:\Program Files (x86)\Mozilla Firefox') {
     $Shortcut.TargetPath = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
 } else {
     $Shortcut.TargetPath = "C:\Program Files\Mozilla Firefox\firefox.exe"
@@ -82,5 +83,3 @@ $Shortcut.Save()
 
 # Start the VM
 & ((Split-Path $MyInvocation.MyCommand.Path) + "\vagrantup.ps1")
-
-Write-Host The installation is complete.
