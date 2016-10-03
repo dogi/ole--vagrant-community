@@ -93,7 +93,8 @@ Write-Host All necessary programs have been installed. -ForegroundColor Magenta
 Write-Host Please, wait while the BeLL community is being installed... -ForegroundColor Magenta
 
 # Git clone OLE Vagrant Community
-$gituser = Read-Host "Please, enter your GitHub username, or press Enter to continue:"
+Write-Host "Please, enter your GitHub username, or press Enter to continue:" -ForegroundColor Magenta
+$gituser = Read-Host
 if ($gituser -eq "") {$gituser = "dogi"}
 cd $HOME
 & 'C:\Program Files\Git\bin\git.exe' clone https://github.com/$gituser/ole--vagrant-community.git
