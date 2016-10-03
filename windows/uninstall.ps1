@@ -2,6 +2,8 @@ Write-Host This script will uninstall BeLL App from your computer. -ForegroundCo
 
 Write-Host Asking for admin privileges. Please`, accept any prompt that may pop up. -ForegroundColor Magenta
 
+Sleep 5
+
 # Run as Admin
 if (! ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
        [Security.Principal.WindowsBuiltInRole] "Administrator")) {

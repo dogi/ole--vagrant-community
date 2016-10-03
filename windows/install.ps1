@@ -3,6 +3,8 @@ Write-Host This script will install your BeLL App. -ForegroundColor Magenta
 
 Write-Host Asking for admin privileges. Please`, accept any prompt that may pop up. -ForegroundColor Magenta
 
+Sleep 5
+
 # Take admin privileges
 if (! ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
           [Security.Principal.WindowsBuiltInRole] "Administrator")) {   
