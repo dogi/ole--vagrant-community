@@ -1,8 +1,5 @@
-<#
- # TODO: Handle possible installation errors
- #>
-
-Write-Host Asking for admin privileges. Please`, accept any prompt that may pop up.
+Write-Host This script will install your BeLL App community.
+Write-Host Asking for admin privileges. Please`, accept any prompt that may pop up. -ForegroundColor Yellow
 
 # Take admin privileges
 if (! ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
@@ -12,7 +9,7 @@ if (! ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]
 	Break
 }
 
-Write-Host Please`, wait while BeLL App is being installed...
+Write-Host Please`, wait while we check if your computer is compatible with BeLL App... -ForegroundColor Yellow
 
 # Set ExecutionPolicy to Bypass
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine -Force
@@ -25,17 +22,20 @@ $slat = $a.SecondLevelAddressTranslationExtensions
 $virtual = $a.VirtualizationFirmwareEnabled
 $vmextensions = $a.VMMonitorModeExtensions
 if ($slat -eq $false) {
-    Write-Host BeLL-Apps is not compatible with your system. In order to install it, you need to upgrade your CPU first.
+    Write-Host BeLL-Apps is not compatible with your system. In order to install it, you need to upgrade your CPU first. -ForegroundColor Yellow
     pause
     exit
 } else {
 	if ($virtual -eq $false) {
         Write-Host Virtualization is not enabled. In order to install BeLL-Apps, you must enable it. `
-        Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/
+        Helpful link: http://www.howtogeek.com/213795/how-to-enable-intel-vt-x-in-your-computers-bios-or-uefi-firmware/ -ForegroundColor Yellow
         pause
         exit
 	}
 }
+
+Write-Host Your computer is compatible! -ForegroundColor Magenta
+Write-Host Please`, wait while BeLL App is being installed... -ForegroundColor Yellow
 
 # Install Chocolatey
 (iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))) >$null 2>&1
@@ -47,9 +47,41 @@ choco install bonjour, git, virtualbox, vagrant, firefox -y -allowEmptyChecksums
 # Add programs to the Path
 RefreshEnv
 
-<#
- ############# TODO: Handle possible installation errors ###############
- #>
+#### Paranoid Check ####
+# Check if bonjour, git, virtualbox, vagrant, firefox have actually been installed
+$progs = New-Object System.Collections.ArrayList
+$prog = ""
+if (! (Test-Path "C:\Program File*\*\firefox.exe")) {
+    $progs.Add("Firefox")
+}
+if (! (Test-Path "C:\HashiCorp\*\*\vagrant.exe")) {
+    $progs.Add("Vagrant")
+}
+if (! (Test-Path "C:\Program File*\*\*\virtualbox.exe")) {
+    $progs.Add("Virtualbox")
+}
+if (! (Test-Path "C:\Program File*\*\*\git.exe")) {
+    $progs.Add("Git")
+}
+if (! (Test-Path "C:\Program File*\*\mDNSResponder.exe")) {
+    $progs.Add("Bonjour")
+}
+
+# Add word separator for printing
+$progs | % {$prog += ($(if($prog){" and "}) + $_)}
+if ($progs.Count -eq 1) {$verb, $pron = "is", "it"}
+else {$verb, $pron = "are", "them"}
+
+# If any of the programs was not installed, ask the user to install them manually before continuing
+if ($progs.Count -gt 0) {
+    Write-Host "                ================================================================================================`
+               | Unfortunately`, $prog could not be installed.`
+               | Please`, BEFORE pressing Enter to continue, 
+               | make sure that $prog $verb installed (install $pron manually, if necessary). 
+                ================================================================================================" -ForegroundColor Yellow
+    pause
+}
+#### End Paranoid Check ####
 
 # Git clone OLE Vagrant Community
 $gituser = Read-Host "Please, enter your GitHub username, or press Enter to continue:"
