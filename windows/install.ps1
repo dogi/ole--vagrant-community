@@ -41,7 +41,7 @@ if ($slat -eq $false) {
 Write-Host Your computer is compatible! -ForegroundColor Magenta
 Write-Host Please`, wait while the necessary programs are being installed... -ForegroundColor Magenta
 Write-Host "NOTE: Please, pay attention only to the messages written in this color `(magenta`). 
-      You can safely disregard any other messages." -ForegroundColor Magenta
+      You can safely disregard ALL other messages." -ForegroundColor Magenta
 
 # Install Chocolatey
 (iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))) >$null 2>&1
