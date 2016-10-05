@@ -34,10 +34,12 @@ if not ERRORLEVEL 1 (
 IF EXIST "C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\start_vagrant_on_boot.bat" (
 	del "C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\start_vagrant_on_boot.bat"
 )
-echo Deleting ole--vagrant-community folder..
-RD /S "C:\Users\%USERNAME%\ole--vagrant-community"
+
 RD /S /Q "%ALLUSERSPROFILE%\chocolatey"
 RD /S /Q "%ALLUSERSPROFILE%\Git"
+echo Deleting ole--vagrant-community folder..
+RD /S "C:\Users\%USERNAME%\ole--vagrant-community"
+
 
 pause
 
