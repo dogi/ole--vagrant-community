@@ -7,7 +7,10 @@ To install a BeLL-Apps community on your system (x86 or amd64 architecture) just
 ```
 powershell -Command "(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/dogi/ole--vagrant-community/master/windows/install.bat', 'install.bat')" && start install.bat && exit
 ```
-Paste that at a [Command prompt](http://www.howtogeek.com/235101/10-ways-to-open-the-command-prompt-in-windows-10/).
+```
+@powershell -Command "(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/dogi/ole--vagrant-community/master/windows/install.ps1', 'install.ps1')" && @powershell -NoProfile -ExecutionPolicy Bypass -Command ".\install.ps1"
+```
+Paste one of the above lines at a [Command prompt](http://www.howtogeek.com/235101/10-ways-to-open-the-command-prompt-in-windows-10/).
 
 ## MacOSX
 
