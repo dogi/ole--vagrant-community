@@ -41,10 +41,10 @@ if ($slat -eq $false) {
 # Check if Hyper-V is enabled
 $hyperv = Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V-All -Online
 if ($hyperv.State -eq "Enabled") {
-    Write-Host Hyper-V is enabled on your computer. BeLL App cannot run with Hyper-V enabled.
-    Write-Host Disabling Hyper-V...
+    Write-Host Hyper-V is enabled on your computer. BeLL App cannot run with Hyper-V enabled. -ForegroundColor Magenta
+    Write-Host Disabling Hyper-V... -ForegroundColor Magenta
     bcdedit /set hypervisorlaunchtype off
-    Write-Host Hyper-V has been disabled. Please`, reboot your computer`, and then install BeLL App again.
+    Write-Host Hyper-V has been disabled. Please`, reboot your computer`, then install BeLL App again. -ForegroundColor Magenta
     pause
     exit 
 }
