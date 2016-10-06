@@ -18,20 +18,11 @@ Write-Host Uninstalling Bonjour... -ForegroundColor Magenta
 choco uninstall bonjour -y
 
 
-# Remove VirtualBox, OLE community VM, and OLE community box,
-# only if the user agrees
-Write-Host 'Are you sure you want to remove Virtualbox? (Y)es, (N)o' -ForegroundColor Magenta
-$vb = Read-Host
-
-if ($vb.ToUpper() -eq 'Y') {
-    Write-Host Uninstalling Virtualbox... -ForegroundColor Magenta
-    choco uninstall virtualbox -y
-}
-  
+# Remove OLE community VM and box, only if the user agrees
 Write-Host 'Do you want to remove the virtual machine? (Y)es, (N)o' -ForegroundColor Magenta
 $vm = Read-Host
 
-if ($vm.ToUpper() -eq 'Y') {
+if ($vm.ToUpper() -eq 'Y' -or $vm -eq "") {
     Write-Host Removing the virtual machine... -ForegroundColor Magenta
     C:\HashiCorp\Vagrant\bin\vagrant.exe destroy community -f
 }
@@ -39,61 +30,68 @@ if ($vm.ToUpper() -eq 'Y') {
 Write-Host 'Do you want to remove also all the files? (Y)es, (N)o' -ForegroundColor Magenta
 $box = Read-Host
 
-if ($box.ToUpper() -eq 'Y') {
+if ($box.ToUpper() -eq 'Y' -or $box -eq "") {
     Write-Host Removing all the files... -ForegroundColor Magenta
     C:\HashiCorp\Vagrant\bin\vagrant.exe box remove ole/jessie64 -f
-}
-
-# Only uninstall Git if the user agrees
-Write-Host 'Are you sure you want to remove Git? (Y)es, (N)o' -ForegroundColor Magenta
-$git = Read-Host
-
-if ($git.ToUpper() -eq 'Y') {
-    Write-Host Unintalling Git... -ForegroundColor Magenta
-    choco uninstall git, git.install -y
 }
 
 # Uninstall vagrant
 Write-Host Uninstalling Vagrant... -ForegroundColor Magenta
 choco uninstall vagrant -y
 
+# Only uninstall Virtualbox if the user agrees
+Write-Host 'Are you sure you want to remove Virtualbox? (Y)es, (N)o' -ForegroundColor Magenta
+$vb = Read-Host
+
+if ($vb.ToUpper() -eq 'Y' -or $vb -eq "") {
+    Write-Host Uninstalling Virtualbox... -ForegroundColor Magenta
+    choco uninstall virtualbox -y
+}
+
+# Only uninstall Git if the user agrees
+Write-Host 'Are you sure you want to remove Git? (Y)es, (N)o' -ForegroundColor Magenta
+$git = Read-Host
+
+if ($git.ToUpper() -eq 'Y' -or $git -eq "") {
+    Write-Host Unintalling Git... -ForegroundColor Magenta
+    choco uninstall git, git.install -y
+}
+
 # Only uninstall Firefox if the user agrees
 Write-Host 'Are you sure you want to remove Firefox? (Y)es, (N)o' -ForegroundColor Magenta
 $ff = Read-Host
 
-if ($ff.ToUpper() -eq 'Y') {
+if ($ff.ToUpper() -eq 'Y' -or $ff -eq "") {
     Write-Host Uninstalling Firefox... -ForegroundColor Magenta
     choco uninstall firefox -y
 }
 
-# Uninstall chocolatey
-Write-Host Uninstalling Chocolatey... -ForegroundColor Magenta
-choco uninstall chocolatey -y
+# Only uninstall chocolatey if the user agrees
+Write-Host 'Are you sure you want to uninstall Chocolatey? (Y)es, (N)o' -ForegroundColor Magenta
+$ch = Read-Host
 
-# Remove ole--vagrant-community and chocolatey folder and subfolders
-Write-Host Removing BeLL App... -ForegroundColor Magenta
-"$HOME\ole--vagrant-community", "$env:ALLUSERSPROFILE\chocolatey" | % {
-    Get-ChildItem -Path $_ -Recurse | Remove-Item -Force -Recurse
-    Remove-Item $_ -Force -Recurse
-    }
-
-# Close ports on network
-Write-Host 'Are you sure you want your firewall to block port 5984? (Y)es, (N)o' -ForegroundColor Magenta
-$fw5984 = Read-Host
-
-if ($fw5984.ToUpper() -eq 'Y') {
-    New-NetFirewallRule -DisplayName "Block Outbound Port 5984 CouchDB/HTTP" -Direction Outbound -LocalPort 5984 -Protocol TCP -Action Block
-    New-NetFirewallRule -DisplayName "Block Inbound Port 5984 CouchDB/HTTP" -Direction Inbound -LocalPort 5984 -Protocol TCP -Action Block
-    Write-Host Port `5984 blocked. -ForegroundColor Magenta
+if ($ch.ToUpper() -eq 'Y' -or $ch -eq "") {
+    Write-Host Uninstalling Chocolatey... -ForegroundColor Magenta
+    choco uninstall chocolatey -y
+    Get-ChildItem -Path "$env:ALLUSERSPROFILE\chocolatey" -Recurse | Remove-Item -Force -Recurse
+    Remove-Item "$env:ALLUSERSPROFILE\chocolatey" -Force -Recurse
 }
 
-Write-Host 'Are you sure you want your firewall to block port 6984? (Y)es, (N)o' -ForegroundColor Magenta
-$fw6984 = Read-Host
+# Remove ole--vagrant-community folder and subfolders
+Write-Host Removing BeLL App... -ForegroundColor Magenta
+Get-ChildItem -Path "$HOME\ole--vagrant-community" -Recurse | Remove-Item -Force -Recurse
+Remove-Item "$HOME\ole--vagrant-community" -Force -Recurse
 
-if ($fw6984.ToUpper() -eq 'Y') {
+# Close ports on network
+Write-Host 'Are you sure you want your firewall to block ports 5984 and 6984? (Y)es, (N)o' -ForegroundColor Magenta
+$fw = Read-Host
+
+if ($fw.ToUpper() -eq 'Y' -or $fw -eq "") {
+    New-NetFirewallRule -DisplayName "Block Outbound Port 5984 CouchDB/HTTP" -Direction Outbound -LocalPort 5984 -Protocol TCP -Action Block
+    New-NetFirewallRule -DisplayName "Block Inbound Port 5984 CouchDB/HTTP" -Direction Inbound -LocalPort 5984 -Protocol TCP -Action Block
     New-NetFirewallRule -DisplayName "Block Outbound Port 6984 CouchDB/HTTPS" -Direction Outbound -LocalPort 6984 -Protocol TCP -Action Block
     New-NetFirewallRule -DisplayName "Block Inbound Port 6984 CouchDB/HTTPS" -Direction Inbound -LocalPort 6984 -Protocol TCP -Action Block
-    Write-Host Port `6984 blocked. -ForegroundColor Magenta
+    Write-Host Ports `5984 and `6984 have been blocked. -ForegroundColor Magenta
 }
 
 # Remove vagrant job from Startup
