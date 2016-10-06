@@ -77,6 +77,15 @@ if ($ch.ToUpper() -eq 'Y' -or $ch -eq "") {
     Remove-Item "$env:ALLUSERSPROFILE\chocolatey" -Force -Recurse
 }
 
+# Reactivate Hyper-V, if the user agrees
+Write-Host Would you like to enable Hyper-V? NOTE: If you don't know what Hyper-V is, it is safer to leave it disabled. (Y)es, (N)o' -ForegroundColor Magenta
+$hv = Read-Host
+
+if ($hv.ToUpper() -eq 'Y' -or $hv -eq "") {
+    bcdedit /set hypervisorlaunchtype auto
+    Write-Host Hyper-V is now enabled. -ForegroundColor Magenta
+}
+
 # Remove ole--vagrant-community folder and subfolders
 Write-Host Removing BeLL App... -ForegroundColor Magenta
 Get-ChildItem -Path "$HOME\ole--vagrant-community" -Recurse | Remove-Item -Force -Recurse
