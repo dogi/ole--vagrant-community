@@ -6,7 +6,7 @@
   <string>com.ole.virtualboxboot.plist</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/user/local/bin/VBoxManage</string>
+    <string>/usr/local/bin/VBoxManage</string>
     <string>startvm</string>
     <string>community</string>
     <string>--type</string>
