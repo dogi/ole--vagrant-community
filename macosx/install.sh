@@ -7,15 +7,15 @@ if [ "$MAN_BREW" = "" ]; then
 fi
 #if not install it
 CHECK_GIT=`brew list | grep git`
-if[ "$CHECK_GIT" == "" ]
+if[ "$CHECK_GIT" = "" ]
 	brew install git
 
 CHECK_VARGANT=`brew cask list | grep vagrant`
-if[ "$CHECK_VARGANT" == "" ]	
+if[ "$CHECK_VARGANT" = "" ]	
 	brew cask install vagrant
 
 CHECK_VIRTUALBOX=`brew cask list | grep virtualbox`
-if[ "$CHECK_VIRTUALBOX" == "" ]
+if[ "$CHECK_VIRTUALBOX" = "" ]
 	brew cask install virtualbox
 	
 cd ~
