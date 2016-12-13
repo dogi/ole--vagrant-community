@@ -59,7 +59,13 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>open http://127.0.0.1:5984/apps/_design/bell/MyApp/index.html</string>
+					<string>CHECK_FIREFOX=`ls /Applications/ | grep "Firefox.app"`
+BELL_URL=http://127.0.0.1:5984/apps/_design/bell/MyApp/index.html
+if [ "$CHECK_FIREFOX" = "" ]; then
+	open "$BELL_URL"
+else
+	open -a firefox "$BELL_URL"
+fi</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
@@ -169,12 +175,10 @@
 						<string>4</string>
 					</dict>
 				</dict>
-				<key>conversionLabel</key>
-				<integer>0</integer>
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>309.000000:253.000000</string>
+				<string>309.000000:597.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/English.lproj/main.nib</string>
 			</dict>

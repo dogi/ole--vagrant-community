@@ -8,7 +8,7 @@ cask_list=`brew cask list`;
 vb=$(echo "$cask_list" | grep "$VB" );
 vg=$(echo "$cask_list" | grep "$VG" );
 
-#the variables vb and vg contain the value "virtaulbox" and "vagrant" respectively if they are installed
+#the variables vb and vg contain the value "virtualbox" and "vagrant" respectively if they are installed
 if [[ $vb == "$VB" ]] ; then
 echo "unistalling virtual box";
 brew cask uninstall virtualbox;
@@ -22,3 +22,9 @@ brew cask uninstall vagrant;
 else
 echo 'vagrant not installed'
 fi
+
+#remove Bell from Dock
+rm /Users/${USER}/Library/LaunchAgents/com.ole.virtualboxboot.plist
+rm -r /Applications/BellCommunity.app
+
+echo "Finish uninstall"

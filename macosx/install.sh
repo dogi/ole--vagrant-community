@@ -6,11 +6,18 @@ if [ "$MAN_BREW" = "" ]; then
 	/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
 #if not install it
+CHECK_GIT=`brew list | grep git`
+if[ "$CHECK_GIT" == "" ]
+	brew install git
 
-brew install git
-brew cask install vagrant
-brew cask install virtualbox
+CHECK_VARGANT=`brew cask list | grep vagrant`
+if[ "$CHECK_VARGANT" == "" ]	
+	brew cask install vagrant
 
+CHECK_VIRTUALBOX=`brew cask list | grep virtualbox`
+if[ "$CHECK_VIRTUALBOX" == "" ]
+	brew cask install virtualbox
+	
 cd ~
 git clone https://github.com/hikaruit15/ole--vagrant-community.git
 cd ole--vagrant-community
