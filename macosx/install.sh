@@ -25,9 +25,11 @@ git clone https://github.com/hikaruit15/ole--vagrant-community.git
 cd ole--vagrant-community
 vagrant up
 
-#start virtual machine when user log in
-#sudo bash macosx/installvagrantboot.sh
-mv ~/ole--vagrant-community/macosx/com.ole.virtualboxboot.plist /Users/${USER}/Library/LaunchAgents/
+# create LaunchAgents if it doesn't exist
+mkdir -p /Users/${USER}/Library/LaunchAgents
+
+# start machine when user logins 
+cp ~/ole--vagrant-community/macosx/com.ole.virtualboxboot.plist /Users/${USER}/Library/LaunchAgents/
 
 #place Icon into Dock
 mv ~/ole--vagrant-community/macosx/BellCommunity.app /Applications/
