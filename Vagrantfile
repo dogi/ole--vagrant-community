@@ -85,9 +85,6 @@ Vagrant.configure(2) do |config|
     echo "@reboot sudo node /root/server.js" | sudo tee -a mycron
     sudo crontab mycron
     sudo rm mycron
-    # fix nodejs
-    cd /usr/bin
-    sudo ln -s nodejs node
     # install BeLL-Apps
     cd /vagrant
     mkdir -p ole
