@@ -89,11 +89,11 @@ Vagrant.configure(2) do |config|
     cd /vagrant
     mkdir -p ole
     cd ole
-    wget https://github.com/open-learning-exchange/BeLL-Apps/archive/0.12.16.zip
-    unzip 0.12.16.zip
+    wget https://github.com/open-learning-exchange/BeLL-Apps/archive/0.12.59.zip
+    unzip 0.12.59.zip
     #ln -s BeLL-Apps-* BeLL-Apps ## won't work in windows
     #cd BeLL-Apps
-    cd BeLL-Apps-0.12.16
+    cd BeLL-Apps-0.12.59
     chmod +x node_modules/.bin/couchapp
     ## check if docker is running
     while ! curl -X GET http://127.0.0.1:5984/_all_dbs ; do
