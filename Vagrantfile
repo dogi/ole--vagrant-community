@@ -95,6 +95,7 @@ Vagrant.configure(2) do |config|
     #cd BeLL-Apps
     cd BeLL-Apps-0.12.59
     chmod +x node_modules/.bin/couchapp
+    #sed -i "s/earthbell.ole.org:5989/nbs.ole.org:5997/" init_docs/ConfigurationsDoc-Community.txt
     ## check if docker is running
     while ! curl -X GET http://127.0.0.1:5984/_all_dbs ; do
       sleep 1
