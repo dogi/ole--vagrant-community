@@ -89,11 +89,11 @@ Vagrant.configure(2) do |config|
     cd /vagrant
     mkdir -p ole
     cd ole
-    wget https://github.com/open-learning-exchange/BeLL-Apps/archive/0.12.59.zip
-    unzip 0.12.59.zip
+    wget https://github.com/open-learning-exchange/BeLL-Apps/archive/0.12.91.zip
+    unzip 0.12.91.zip
     #ln -s BeLL-Apps-* BeLL-Apps ## won't work in windows
     #cd BeLL-Apps
-    cd BeLL-Apps-0.12.59
+    cd BeLL-Apps-0.12.91
     chmod +x node_modules/.bin/couchapp
     #sed -i "s/earthbell.ole.org:5989/nbs.ole.org:5997/" init_docs/ConfigurationsDoc-Community.txt
     ## check if docker is running
