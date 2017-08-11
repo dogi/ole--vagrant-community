@@ -85,17 +85,21 @@ Vagrant.configure(2) do |config|
     echo "@reboot sudo node /root/server.js" | sudo tee -a mycron
     sudo crontab mycron
     sudo rm mycron
+    # fix nodejs
+    cd /usr/bin
+    sudo ln -s nodejs node
     # install BeLL-Apps
     cd /vagrant
     mkdir -p ole
     cd ole
-    wget https://github.com/open-learning-exchange/BeLL-Apps/archive/0.12.91.zip
-    unzip 0.12.91.zip
+    wget https://github.com/open-learning-exchange/BeLL-Apps/archive/0.13.11.zip
+    unzip 0.13.11.zip
     #ln -s BeLL-Apps-* BeLL-Apps ## won't work in windows
     #cd BeLL-Apps
-    cd BeLL-Apps-0.12.91
+    cd BeLL-Apps-0.13.11
     chmod +x node_modules/.bin/couchapp
-    #sed -i "s/earthbell.ole.org:5989/nbs.ole.org:5997/" init_docs/ConfigurationsDoc-Community.txt
+    #for vi.ole.org:5999 only
+    #sed -i 's#earthbell.ole.org:5989#old.vi.ole.org:5984#' init_docs/ConfigurationsDoc-Community.txt
     ## check if docker is running
     while ! curl -X GET http://127.0.0.1:5984/_all_dbs ; do
       sleep 1
